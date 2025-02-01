@@ -1,0 +1,46 @@
+services:
+  ollama:
+    image: ollama/ollama:${OLLAMA_IMAGE_VERSION:-latest}
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "${OLLAMA_PORT}:11434"
+    volumes:
+      - ollama:/root/.ollama
+    environment:
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - NVIDIA_VISIBLE_DEVICES=all
+    runtime: nvidia
+
+  openWebUI:
+    image: ghcr.io/open-webui/open-webui:${OPEN_WEBUI_IMAGE_VERSION:-latest}
+    container_name: open-webui
+    restart: unless-stopped
+    ports:
+      - "${OPEN_WEBUI_PORT}:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - open-webui:/app/backend/data
+    environment:
+      - 'OLLAMA_BASE_URL=http://ollama:11434'
+      # OAUTH - OIDC Authelia Configuration
+      # https://www.authelia.com/integration/openid-connect/open-webui/
+      - 'ENABLE_OAUTH_SIGNUP=true'
+      - 'ENABLE_LOGIN_FORM=false'
+      - 'OAUTH_MERGE_ACCOUNTS_BY_EMAIL=true'
+      - 'OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID}'
+      - 'OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}'
+      - 'OPENID_PROVIDER_URL=${OPENID_PROVIDER_URL}'
+      - 'OAUTH_PROVIDER_NAME=${OAUTH_PROVIDER_NAME}'
+      - 'OAUTH_SCOPES=openid email profile groups'
+      - 'ENABLE_OAUTH_ROLE_MANAGEMENT=true'
+      - 'OAUTH_ALLOWED_ROLES=users,admins'
+      - 'OAUTH_ADMIN_ROLES=admins'
+      - 'OAUTH_ROLES_CLAIM=groups'
+    depends_on:
+      - ollama
+
+volumes:
+  ollama:
+  open-webui:
