@@ -7,6 +7,7 @@ This project provides a Docker-based setup to self-host AI services using Ollama
 - Docker
 - Docker Compose
 - NVIDIA GPU with drivers installed (for GPU acceleration)
+- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installation) (if necessary)
 
 ## Setup
 
@@ -54,12 +55,14 @@ This project provides a Docker-based setup to self-host AI services using Ollama
 - `ollama`: Stores Ollama data.
 - `open-webui`: Stores OpenWebUI data.
 
-## Accessing the Services
+## Usage
+
+### Accessing the Services
 
 - **Ollama**: Accessible at `http://localhost:${OLLAMA_PORT}`
 - **OpenWebUI**: Accessible at `http://localhost:${OPEN_WEBUI_PORT}`
 
-## Stopping the Services
+### Stopping the Services
 
 To stop the services, run:
 
@@ -67,7 +70,7 @@ To stop the services, run:
 docker compose down
 ```
 
-## Updating the Services
+### Updating the Services
 
 To update the services to the latest version, pull the latest images and restart the services:
 
@@ -75,6 +78,18 @@ To update the services to the latest version, pull the latest images and restart
 docker compose pull
 docker compose up -d
 ```
+
+### Download Models
+
+More models can be found on the [Ollama library](https://ollama.com/library)⁠.
+
+To download a model, use the following command:
+
+```console
+docker exec -it ollama ollama run llama3
+```
+
+**Note**: Replace `llama3` with the model name.
 
 ## Troubleshooting
 
